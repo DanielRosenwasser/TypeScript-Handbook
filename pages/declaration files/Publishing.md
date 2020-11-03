@@ -13,7 +13,7 @@ If your package is not written in TypeScript then the second is the preferred ap
 # Including declarations in your npm package
 
 If your package has a main `.js` file, you will need to indicate the main declaration file in your `package.json` file as well.
-Set the `types` property to point to your bundled declaration file.
+Set the `types` property to point to the corresponding `.d.ts` file.
 For example:
 
 ```json
@@ -26,11 +26,11 @@ For example:
 }
 ```
 
-Note that the `"typings"` field is synonymous with `"types"`, and could be used as well.
+Note that the `"typings"` field is synonymous with `"types"`, and could be used as well, but we recommend using `"types"` these days.
 
 Also note that if your `package.json` includes the `"files"` property the `"types"` property will be ignored. In that case you need to pass your main declaration file to the `"files"` property as well.
 
-Also note that if your main declaration file is named `index.d.ts` and lives at the root of the package (next to `index.js`) you do not need to mark the `"types"` property, though it is advisable to do so.
+Also note that if your main declaration file is named `index.d.ts` and lives at the root of the package (next to `index.js`) you do not need to mark the `"types"` property (just as you don't need to set the `"main"` property if you have a top-level `index.js` file.
 
 ## Dependencies
 
@@ -59,20 +59,19 @@ Here, our package depends on the `browserify` and `typescript` packages.
 
 Our package exposes declarations from each of those, so any user of our `browserify-typescript-extension` package needs to have these dependencies as well.
 For that reason, we used `"dependencies"` and not `"devDependencies"`, because otherwise our consumers would have needed to manually install those packages.
-If we had just written a command line application and not expected our package to be used as a library, we might have used `devDependencies`.
 
-## Red flags
+If we were just writing a command line application and we don't expect our package to be used as a library, we might instead use `devDependencies`.
 
-### `/// <reference path="..." />`
+## Consuming dependencies without imports
 
-*Don't* use `/// <reference path="..." />` in your declaration files.
+In some cases, you will need to consume the dependencies you require, but cannot do so with an `import` statement.
+**Do not** use a `/// <reference path="..." />` directive with a relative path.
 
 ```ts
 /// <reference path="../typescript/lib/typescriptServices.d.ts" />
-....
 ```
 
-*Do* use `/// <reference types="..." />` instead.
+Instead, use `/// <reference types="..." />` which will perform the same type of Node-style lookup for the package's declarations.
 
 ```ts
 /// <reference types="typescript" />
